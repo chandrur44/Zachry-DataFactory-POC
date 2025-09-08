@@ -1,0 +1,44 @@
+{
+	"name": "Parquet1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "AzureBlobStorage1",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Parquet",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobStorageLocation",
+				"fileName": "part-00000-b87dab9a-06cd-482a-b840-39dec0afdbc6-c000.snappy.parquet",
+				"folderPath": "cipher_mining/bronze/employee",
+				"container": "networking"
+			},
+			"compressionCodec": "snappy"
+		},
+		"schema": [
+			{
+				"name": "employee_id",
+				"type": "INT32"
+			},
+			{
+				"name": "first_name",
+				"type": "UTF8"
+			},
+			{
+				"name": "last_name",
+				"type": "UTF8"
+			},
+			{
+				"name": "department",
+				"type": "UTF8"
+			},
+			{
+				"name": "salary",
+				"type": "DECIMAL",
+				"precision": 10,
+				"scale": 2
+			}
+		]
+	}
+}
