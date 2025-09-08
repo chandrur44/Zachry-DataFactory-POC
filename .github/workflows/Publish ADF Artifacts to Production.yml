@@ -1,0 +1,73 @@
+name: Publish ADF Artifacts to Production
+
+on:
+  workflow_dispatch:   # Manual trigger
+  push:
+    branches:
+      - main           # Change as per your repo branch
+
+jobs:
+  publish-adf:
+    runs-on: ubuntu-latest
+    steps:
+      # Step 1: Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Step 2: Log in to Azure
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          # Use a service principal JSON with access to target ADF
+
+      # Step 3: Setup Node.js (for ADF utilities)
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      # Step 4: Install ADF Utilities
+      - name: Install ADF Utilities
+        run: npm install -g @microsoft/azure-data-factory-utilities
+
+      # Step 5: Publish folder by folder
+      - name: Publish Pipelines
+        run: |
+          adf publish \
+            --root ./pipeline \
+            --factory-name ${{ secrets.ADF_NAME }} \
+            --resource-group ${{ secrets.ADF_RG }} \
+            --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }}
+
+      - name: Publish Datasets
+        run: |
+          adf publish \
+            --root ./dataset \
+            --factory-name ${{ secrets.ADF_NAME }} \
+            --resource-group ${{ secrets.ADF_RG }} \
+            --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }}
+
+      - name: Publish Linked Services
+        run: |
+          adf publish \
+            --root ./linkedService \
+            --factory-name ${{ secrets.ADF_NAME }} \
+            --resource-group ${{ secrets.ADF_RG }} \
+            --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }}
+
+      - name: Publish Dataflows
+        run: |
+          adf publish \
+            --root ./dataflow \
+            --factory-name ${{ secrets.ADF_NAME }} \
+            --resource-group ${{ secrets.ADF_RG }} \
+            --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }}
+
+      - name: Publish Triggers
+        run: |
+          adf publish \
+            --root ./trigger \
+            --factory-name ${{ secrets.ADF_NAME }} \
+            --resource-group ${{ secrets.ADF_RG }} \
+            --subscription-id ${{ secrets.AZ_SUBSCRIPTION_ID }}
